@@ -5,13 +5,19 @@ set -o nounset
 set -o pipefail
 set -o xtrace
 
+# paths for source and target
 readonly TARGET_HOST=tflint@cam4.local
 readonly TARGET_PATH=/home/tflint/campi
 readonly TARGET_ARCH=aarch64-unknown-linux-gnu
 readonly SOURCE_PATH=./target/${TARGET_ARCH}/release/campi
 
+# also copy the html files
+readonly SOURCE_HTML=./src/*
+readonly TARGET_HTML=${TARGET_PATH}/src
+
 cargo build --release --target=${TARGET_ARCH}
 rsync ${SOURCE_PATH} ${TARGET_HOST}:${TARGET_PATH}
+rsync ${SOURCE_HTML} ${TARGET_HOST}:${TARGET_HTML}
 ssh -t ${TARGET_HOST} "
     cd ${TARGET_PATH}
     ./campi
